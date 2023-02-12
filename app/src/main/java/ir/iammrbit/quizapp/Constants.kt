@@ -1,10 +1,5 @@
 package ir.iammrbit.quizapp
 
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.TransitionDrawable
-import android.widget.ImageView
-import androidx.core.util.rangeTo
-import java.math.BigInteger
 
 object Constants {
 
