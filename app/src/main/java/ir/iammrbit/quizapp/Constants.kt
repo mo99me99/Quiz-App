@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.widget.ImageView
 import androidx.core.util.rangeTo
+import java.math.BigInteger
 
 object Constants {
 
@@ -102,5 +103,6 @@ object Constants {
         questionsList.add(que10)
         return questionsList
     }
+
 
 }
