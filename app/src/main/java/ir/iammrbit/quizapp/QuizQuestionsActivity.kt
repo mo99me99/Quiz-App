@@ -1,20 +1,18 @@
 package ir.iammrbit.quizapp
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import ir.iammrbit.quizapp.databinding.ActivityQuizQuestionsBinding
-import org.w3c.dom.Text
 
 class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
 
@@ -47,6 +45,7 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
         val view = binding.root
         setContentView(view)
 
+        mCurrentPosition = 1
         progressBar = binding.progressBar
         tvProgressBar = binding.tvProgress
         tvQuestion = binding.tvQuestion
@@ -63,7 +62,7 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
         tvOptionFour?.setOnClickListener(this)
         btnSubmit?.setOnClickListener(this)
 
-        mQuestionList = Constants.getQuestion()
+        mQuestionList = Constants.getQuestions()
         setQuestion()
         defaultOptionView()
 
@@ -71,8 +70,7 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun setQuestion() {
-
-        mCurrentPosition = 1
+        defaultOptionView()
         val question: Question = mQuestionList!![mCurrentPosition - 1]
         ivImage?.setImageResource(question.image)
         progressBar?.progress = mCurrentPosition
@@ -126,15 +124,43 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
-
         when(view?.id){
             R.id.option_one -> {tvOptionOne?.let {selectedOptionView(it,1)}}
-            R.id.option_tow -> {tvOptionTow?.let {selectedOptionView(it,2)}}
+            R.id.option_tow -> {tvOptionTow?.let {
+                selectedOptionView(it,2)
+                 }
+            }
             R.id.option_three -> {tvOptionThree?.let {selectedOptionView(it,3)}}
             R.id.option_four -> {tvOptionFour?.let {selectedOptionView(it,4)}}
+            R.id.btn_submit -> {
+                Toast.makeText(   applicationContext,"SUBMIT" , Toast.LENGTH_SHORT).show()
+                if(mSelectedOptionPosition == 0){
+
+                    if (mCurrentPosition <= mQuestionList!!.size){
+                        setQuestion()
+                    }
+                }else{
+                    val question = mQuestionList?.get(mCurrentPosition-1)
+                    print("\n------${question}--------\n")
+                    if (question!!.correctAnswer != mSelectedOptionPosition){
+                            answerView(mSelectedOptionPosition , R.drawable.wrong_option_border_bg)
+                    }
+                    answerView(question.correctAnswer , R.drawable.correct_option_border_bg)
+                }
+            }
         }
 
-        R.id.btn_submit//
+    }
+    private fun answerView(answer : Int , drawableView : Int){
+        when(answer){
+            1 -> tvOptionOne!!.background = ContextCompat.getDrawable( this, drawableView)
+            2 -> tvOptionTow!!.background = ContextCompat.getDrawable(this , drawableView)
+            3 -> tvOptionThree!!.background = ContextCompat.getDrawable(this , drawableView)
+            4 -> tvOptionFour!!.background = ContextCompat.getDrawable(this , drawableView)
 
+        }
     }
 }
+
+
+

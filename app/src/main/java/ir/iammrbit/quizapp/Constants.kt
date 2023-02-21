@@ -3,7 +3,7 @@ package ir.iammrbit.quizapp
 
 object Constants {
 
-    fun getQuestion():ArrayList<Question>{
+    fun getQuestions():ArrayList<Question>{
 
        val questionsList = ArrayList<Question>()
         val que1 = Question(
