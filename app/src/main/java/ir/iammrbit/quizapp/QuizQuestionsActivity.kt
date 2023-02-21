@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -14,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import ir.iammrbit.quizapp.databinding.ActivityQuizQuestionsBinding
+import kotlin.math.log
 
 class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
 
@@ -23,6 +25,7 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
     private var mCurrentPosition : Int = 1
     private var mQuestionList : ArrayList<Question>? = null
     private var mSelectedOptionPosition : Int = 0
+    private var mCheckList :ArrayList<Boolean> = ArrayList()
 
     private var progressBar : ProgressBar?= null
     private var tvProgressBar:TextView? = null
@@ -70,6 +73,9 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
         btnSubmit?.setOnClickListener(this)
 
         mQuestionList = Constants.getQuestions()
+        for (i in 1..mQuestionList!!.size){
+            mCheckList.add(false)
+        }
         setQuestion()
         defaultOptionView()
 
@@ -140,8 +146,7 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
             R.id.option_three -> {tvOptionThree?.let {selectedOptionView(it,3)}}
             R.id.option_four -> {tvOptionFour?.let {selectedOptionView(it,4)}}
             R.id.btn_submit -> {
-                Toast.makeText(   applicationContext,"SUBMIT" , Toast.LENGTH_SHORT).show()
-                if(mSelectedOptionPosition == 0){
+                if(mSelectedOptionPosition == 0 || mCheckList[mCurrentPosition-1]){
                     mCurrentPosition++
                     if (mCurrentPosition <= mQuestionList!!.size){
                         setQuestion()
@@ -150,13 +155,14 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
                         intent.putExtra(Constants.USER_NAME , mUserName)
                         intent.putExtra(Constants.CORRECT_ANSWERS ,mCorrectAnswers )
                         intent.putExtra(Constants.TOTAL_QUESTIONS , mQuestionList?.size)
+                        intent.putExtra(Constants.CHECK_LIST, mCheckList)
                         startActivity(intent)
                         finish()
                     }
                 }else{
                     val question = mQuestionList?.get(mCurrentPosition-1)
                     if (question!!.correctAnswer != mSelectedOptionPosition){
-                            answerView(mSelectedOptionPosition , R.drawable.wrong_option_border_bg)
+                        answerView(mSelectedOptionPosition , R.drawable.wrong_option_border_bg)
                     }else{
                         mCorrectAnswers++
                     }
@@ -166,6 +172,7 @@ class QuizQuestionsActivity : AppCompatActivity(),View.OnClickListener {
                     }else{
                         btnSubmit?.text = "NEXT"
                     }
+                    mCheckList[mCurrentPosition-1] = true
                     mSelectedOptionPosition = 0
                 }
             }
